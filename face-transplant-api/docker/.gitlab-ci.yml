@@ -1,0 +1,56 @@
+stages:
+  - compile-image
+  - deploy
+variables:
+  DOCKER_AUTH_CONFIG: '{"auths": {"harbor.blueasiainfo.com:29443": {"auth": "YmFpbmZvX3JlYWQ6OEMxdFBpc2R1WU5sSlJ5NQ=="}}}'
+  API_IMAGE_NAME: "$HARBOR_URL/$HARBOR_PROJECT/api"
+  UI_IMAGE_NAME: "$HARBOR_URL/$HARBOR_PROJECT/ui"
+before_script:
+  - sed -i 's/^MAINTAINER.*/MAINTAINER '"$GITLAB_USER_LOGIN"'/g' ./docker/Dockerfile-api
+  - sed -i 's/^MAINTAINER.*/MAINTAINER '"$GITLAB_USER_LOGIN"'/g' ./docker/Dockerfile-ui
+compile-api:
+  stage: compile-image
+  image: harbor.blueasiainfo.com:29443/common/node-maven-jdk-docker:14-3.9-8-18.09.9
+  script:
+    # maven编译项目
+    - mvn clean package -Dmaven.test.skip=true -Dfile.encoding=UTF-8
+    # nodejs编译项目
+    - cd ruoyi-ui
+    - npm install --registry=https://registry.npm.taobao.org
+    - npm run build:prod
+    # 登录仓库
+    - docker login -u $HARBOR_USER -p $HARBOR_PASS $HARBOR_URL
+    # 构建镜像
+    - cd ../docker
+    - docker build -t ${API_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} -f Dockerfile-api ..
+    - docker build -t ${UI_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} -f Dockerfile-ui ..
+    # 将镜像推动仓库
+    - docker push ${API_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}
+    - docker tag ${API_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} ${API_IMAGE_NAME}:latest
+    - docker push ${API_IMAGE_NAME}:latest
+    - docker push ${UI_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}
+    - docker tag ${UI_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} ${UI_IMAGE_NAME}:latest
+    - docker push ${UI_IMAGE_NAME}:latest
+    # 清理镜像
+    - docker image rm ${API_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} ${API_IMAGE_NAME}:latest ${UI_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} ${UI_IMAGE_NAME}:latest
+  cache:
+    key: node_modules-new
+    paths:
+      - ruoyi-ui/node_modules
+  # 编译后提交工件dist文件夹 
+  tags:
+    # 执行Job的Runner
+    - ruoyi
+deploy-rancher:
+  stage: deploy
+  image: cdrx/rancher-gitlab-deploy
+  dependencies: []
+  script:
+    - upgrade --environment 1a73 --stack $HARBOR_PROJECT --service jar --new-image $API_IMAGE_NAME:${CI_COMMIT_SHORT_SHA} --wait-for-upgrade-to-finish --rollback-on-error --finish-upgrade
+    - upgrade --environment 1a73 --stack $HARBOR_PROJECT --service ui --new-image $UI_IMAGE_NAME:${CI_COMMIT_SHORT_SHA} --wait-for-upgrade-to-finish --rollback-on-error --finish-upgrade
+  tags:
+    # 执行Job的服务器
+    - ruoyi
+  only:
+    # 只有在master才会执行
+    - develop

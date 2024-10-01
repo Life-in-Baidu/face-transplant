@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.mapper.MergeListMapper">
+
+    <resultMap type="MergeList" id="MergeListResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="mergeState"    column="merge_state"    />
+        <result property="mergeList"    column="merge_list"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="url"    column="url"    />
+        <result property="price"    column="price"    />
+        <result property="priceRew"    column="price_rew"    />
+        <result property="directoryTag"    column="directory_tag"    />
+        <result property="directoryId"    column="directory_id"    />
+    </resultMap>
+
+    <sql id="selectMergeListVo">
+        select id, user_id, merge_state, merge_list, create_time ,url,
+               price, price_rew,
+               directory_tag, directory_id
+        from biz_merge_list
+    </sql>
+
+    <select id="selectMergeListList" parameterType="MergeList" resultMap="MergeListResult">
+        <include refid="selectMergeListVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="mergeState != null "> and merge_state = #{mergeState}</if>
+            <if test="mergeList != null  and mergeList != ''"> and merge_list = #{mergeList}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="priceRew != null "> and price_rew = #{priceRew}</if>
+            <if test="directoryTag != null  and directoryTag != ''"> and directory_tag = #{directoryTag}</if>
+            <if test="directoryId != null "> and directory_id = #{directoryId}</if>
+        </where>
+    </select>
+
+    <select id="selectMergeListById" parameterType="Long" resultMap="MergeListResult">
+        <include refid="selectMergeListVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectMergeListStateList" resultType="com.ruoyi.biz.domain.MergeList">
+        <include refid="selectMergeListVo"/>
+        <where>
+            <if test="mergeState != null "> and merge_state = #{mergeState}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="mergeList != null  and mergeList != ''"> and merge_list = #{mergeList}</if>
+
+            <if test="limitNum != null ">
+              order by id desc
+            </if>
+            <if test="number != null ">
+            limit  #{number}
+            </if>
+        </where>
+
+    </select>
+
+    <insert id="insertMergeList" parameterType="MergeList" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_merge_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="mergeState != null">merge_state,</if>
+            <if test="mergeList != null">merge_list,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="url != null">url,</if>
+            <if test="price != null">price,</if>
+            <if test="priceRew != null">price_rew,</if>
+            <if test="directoryTag != null">directory_tag,</if>
+            <if test="directoryId != null">directory_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="mergeState != null">#{mergeState},</if>
+            <if test="mergeList != null">#{mergeList},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="url != null">#{url},</if>
+            <if test="price != null">#{price},</if>
+            <if test="priceRew != null">#{priceRew},</if>
+            <if test="directoryTag != null">#{directoryTag},</if>
+            <if test="directoryId != null">#{directoryId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMergeList" parameterType="MergeList">
+        update biz_merge_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="mergeState != null">merge_state = #{mergeState},</if>
+            <if test="mergeList != null">merge_list = #{mergeList},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="priceRew != null">price_rew = #{priceRew},</if>
+            <if test="directoryTag != null">directory_tag = #{directoryTag},</if>
+            <if test="directoryId != null">directory_id = #{directoryId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMergeListById" parameterType="Long">
+        delete from biz_merge_list where id = #{id}
+    </delete>
+
+    <delete id="deleteMergeListByIds" parameterType="String">
+        delete from biz_merge_list where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.mapper.PhotoAlbumMapper">
+    
+    <resultMap type="PhotoAlbum" id="PhotoAlbumResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="imgUrl"    column="img_url"    />
+        <result property="usageTimes"    column="usage_times"    />
+        <result property="figureTag"    column="figure_tag"    />
+        <result property="directoryId"    column="directory_id"    />
+        <result property="ordIntegral"    column="ord_integral"    />
+        <result property="rewIntegral"    column="rew_integral"    />
+        <result property="imgType"    column="img_type"    />
+        <result property="styleId"    column="style_id"    />
+    </resultMap>
+
+    <sql id="selectPhotoAlbumVo">
+        select id, user_id, img_url, usage_times,
+               figure_tag, directory_id, ord_integral,
+               rew_integral,
+               img_type,
+               style_id
+        from biz_photo_album
+    </sql>
+
+    <select id="selectPhotoAlbumList" parameterType="PhotoAlbum" resultMap="PhotoAlbumResult">
+        <include refid="selectPhotoAlbumVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="imgUrl != null  and imgUrl != ''"> and img_url = #{imgUrl}</if>
+            <if test="usageTimes != null "> and usage_times = #{usageTimes}</if>
+            <if test="figureTag != null "> and figure_tag = #{figureTag}</if>
+            <if test="directoryId != null "> and directory_id = #{directoryId}</if>
+            <if test="ordIntegral != null "> and ord_integral = #{ordIntegral}</if>
+            <if test="rewIntegral != null "> and rew_integral = #{rewIntegral}</if>
+            <if test="imgType != null "> and img_type = #{imgType}</if>
+            <if test="styleId != null "> and style_id = #{styleId}</if>
+        </where>
+    </select>
+    
+    <select id="selectPhotoAlbumById" parameterType="Long" resultMap="PhotoAlbumResult">
+        <include refid="selectPhotoAlbumVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectPhotoAlbumIdList" resultType="com.ruoyi.biz.domain.PhotoAlbum">
+        <include refid="selectPhotoAlbumVo"/>
+        where directory_id = #{directory_id}
+    </select>
+    <select id="selectPhotoAlbumRandList" parameterType="DirectoryParam" resultType="com.ruoyi.biz.domain.PhotoAlbum" >
+        <include refid="selectPhotoAlbumVo"/>
+        <where>
+            id in (
+            SELECT id
+            FROM biz_photo_album
+            ORDER BY id
+            )
+            <if test="directoryId != null "> and directory_id = #{directoryId}</if>
+            <if test="imgType != null "> and img_type = #{imgType}</if>
+            <if test="figureTag != null "> and figure_tag = #{figureTag}</if>
+
+        </where>
+        ORDER BY RAND()
+        limit #{number}
+
+    </select>
+    <select id="getUrl" resultType="java.lang.String">
+        select img_url from biz_photo_album
+        ORDER BY RAND()
+        limit 1
+    </select>
+    <select id="selectPhotoAlbum" resultType="com.ruoyi.biz.domain.PhotoAlbum">
+        <include refid="selectPhotoAlbumVo"/>
+        <where>
+            <if test="id != null "> and id = #{id}</if>
+            <if test="figureTag != null "> and figure_tag = #{figureTag}</if>
+
+        </where>
+    </select>
+
+    <insert id="insertPhotoAlbum" parameterType="PhotoAlbum" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_photo_album
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="imgUrl != null">img_url,</if>
+            <if test="usageTimes != null">usage_times,</if>
+            <if test="figureTag != null">figure_tag,</if>
+            <if test="directoryId != null">directory_id,</if>
+            <if test="ordIntegral != null">ord_integral,</if>
+            <if test="rewIntegral != null">rew_integral,</if>
+            <if test="imgType != null">img_type,</if>
+            <if test="styleId != null">style_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="imgUrl != null">#{imgUrl},</if>
+            <if test="usageTimes != null">#{usageTimes},</if>
+            <if test="figureTag != null">#{figureTag},</if>
+            <if test="directoryId != null">#{directoryId},</if>
+            <if test="ordIntegral != null">#{ordIntegral},</if>
+            <if test="rewIntegral != null">#{rewIntegral},</if>
+            <if test="imgType != null">#{imgType},</if>
+            <if test="styleId != null">#{styleId},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePhotoAlbum" parameterType="PhotoAlbum">
+        update biz_photo_album
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="imgUrl != null">img_url = #{imgUrl},</if>
+            <if test="usageTimes != null">usage_times = #{usageTimes},</if>
+            <if test="figureTag != null">figure_tag = #{figureTag},</if>
+            <if test="directoryId != null">directory_id = #{directoryId},</if>
+            <if test="ordIntegral != null">ord_integral = #{ordIntegral},</if>
+            <if test="rewIntegral != null">rew_integral = #{rewIntegral},</if>
+            <if test="imgType != null">img_type = #{imgType},</if>
+            <if test="styleId != null">style_id = #{styleId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePhotoAlbumById" parameterType="Long">
+        delete from biz_photo_album where id = #{id}
+    </delete>
+
+    <delete id="deletePhotoAlbumByIds" parameterType="String">
+        delete from biz_photo_album where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

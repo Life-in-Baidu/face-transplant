@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.mapper.MergeImgMapper">
+    
+    <resultMap type="MergeImg" id="MergeImgResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="imgUrl"    column="img_url"    />
+        <result property="modelId"    column="model_id"    />
+        <result property="mergeUrl"    column="merge_url"    />
+        <result property="mergeTime"    column="merge_time"    />
+        <result property="mergeState"    column="merge_state"    />
+        <result property="mergeListId"    column="merge_list_id"    />
+    </resultMap>
+
+    <sql id="selectMergeImgVo">
+        select id, user_id, img_url, model_id, merge_url, merge_time, merge_state, merge_list_id from biz_merge_img
+    </sql>
+
+    <select id="selectMergeImgList" parameterType="MergeImg" resultMap="MergeImgResult">
+        <include refid="selectMergeImgVo"/>
+        <where>  
+            <if test="imgUrl != null  and imgUrl != ''"> and img_url = #{imgUrl}</if>
+            <if test="modelId != null  and modelId != ''"> and model_id = #{modelId}</if>
+            <if test="mergeUrl != null  and mergeUrl != ''"> and merge_url = #{mergeUrl}</if>
+            <if test="mergeTime != null "> and merge_time = #{mergeTime}</if>
+            <if test="mergeState != null "> and merge_state = #{mergeState}</if>
+            <if test="mergeListId != null "> and merge_list_id = #{mergeListId}</if>
+        </where>
+    </select>
+    
+    <select id="selectMergeImgById" parameterType="Long" resultMap="MergeImgResult">
+        <include refid="selectMergeImgVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectMergeImgIdList" resultType="com.ruoyi.biz.domain.MergeImg">
+        <include refid="selectMergeImgVo"/>
+        where merge_list_id = #{mergeListId}
+    </select>
+    <select id="selectByModelId" resultType="com.ruoyi.biz.domain.MergeImg">
+        <include refid="selectMergeImgVo"/>
+         where model_id = #{modelId}
+    </select>
+
+    <insert id="insertMergeImg" parameterType="MergeImg" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_merge_img
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="imgUrl != null">img_url,</if>
+            <if test="modelId != null">model_id,</if>
+            <if test="mergeUrl != null">merge_url,</if>
+            <if test="mergeTime != null">merge_time,</if>
+            <if test="mergeState != null">merge_state,</if>
+            <if test="mergeListId != null">merge_list_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="imgUrl != null">#{imgUrl},</if>
+            <if test="modelId != null">#{modelId},</if>
+            <if test="mergeUrl != null">#{mergeUrl},</if>
+            <if test="mergeTime != null">#{mergeTime},</if>
+            <if test="mergeState != null">#{mergeState},</if>
+            <if test="mergeListId != null">#{mergeListId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMergeImg" parameterType="MergeImg">
+        update biz_merge_img
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="imgUrl != null">img_url = #{imgUrl},</if>
+            <if test="modelId != null">model_id = #{modelId},</if>
+            <if test="mergeUrl != null">merge_url = #{mergeUrl},</if>
+            <if test="mergeTime != null">merge_time = #{mergeTime},</if>
+            <if test="mergeState != null">merge_state = #{mergeState},</if>
+            <if test="mergeListId != null">merge_list_id = #{mergeListId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMergeImgById" parameterType="Long">
+        delete from biz_merge_img where id = #{id}
+    </delete>
+
+    <delete id="deleteMergeImgByIds" parameterType="String">
+        delete from biz_merge_img where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

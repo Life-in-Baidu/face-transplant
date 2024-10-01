@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.mapper.SmsCodeMapper">
+
+    <resultMap type="SmsCode" id="SmsCodeResult">
+        <result property="id"    column="id"    />
+        <result property="phone"    column="phone"    />
+        <result property="code"    column="code"    />
+        <result property="addTime"    column="add_time"    />
+        <result property="used"    column="used"    />
+    </resultMap>
+
+    <sql id="selectBizSmsCodeVo">
+        select id, phone, code, add_time, used from biz_sms_code
+    </sql>
+
+    <select id="selectBizSmsCodeList" parameterType="SmsCode" resultMap="SmsCodeResult">
+        <include refid="selectBizSmsCodeVo"/>
+        <where>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="addTime != null "> and add_time = #{addTime}</if>
+            <if test="used != null "> and used = #{used}</if>
+        </where>
+    </select>
+
+    <select id="selectBizSmsCodeById" parameterType="Long" resultMap="SmsCodeResult">
+        <include refid="selectBizSmsCodeVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectTodaySmsCount" resultType="java.lang.Integer">
+        select COUNT(*) from biz_sms_code
+        where phone = #{phone}
+        and used = 0
+        AND DATE_FORMAT(NOW(),'%Y-%m-%d') = DATE_FORMAT(add_time,'%Y-%m-%d')
+    </select>
+    <select id="selectByPhoneAndCode" resultMap="SmsCodeResult">
+        select * from biz_sms_code
+        where phone = #{phone}
+        and add_time > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+        and code = #{code}
+        and used = 0
+    </select>
+    <select id="selectByPhoneLatest" resultMap="SmsCodeResult">
+        select * from biz_sms_code
+        where phone = #{phone}
+          and add_time > DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+          and used = 0
+        order by add_time desc limit 1
+    </select>
+
+
+    <insert id="insertBizSmsCode" parameterType="SmsCode">
+        insert into biz_sms_code
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="code != null and code != ''">code,</if>
+            <if test="addTime != null">add_time,</if>
+            <if test="used != null">used,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="code != null and code != ''">#{code},</if>
+            <if test="addTime != null">#{addTime},</if>
+            <if test="used != null">#{used},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizSmsCode" parameterType="SmsCode">
+        update biz_sms_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="code != null and code != ''">code = #{code},</if>
+            <if test="addTime != null">add_time = #{addTime},</if>
+            <if test="used != null">used = #{used},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizSmsCodeById" parameterType="Long">
+        delete from biz_sms_code where id = #{id}
+    </delete>
+
+    <delete id="deleteBizSmsCodeByIds" parameterType="String">
+        delete from biz_sms_code where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

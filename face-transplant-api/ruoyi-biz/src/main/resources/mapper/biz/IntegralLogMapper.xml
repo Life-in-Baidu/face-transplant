@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.mapper.IntegralLogMapper">
+    
+    <resultMap type="IntegralLog" id="IntegralLogResult">
+        <result property="id"    column="id"    />
+        <result property="payMoney"    column="pay_money"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="ordIntegral"    column="ord_integral"    />
+        <result property="rewIntegral"    column="rew_integral"    />
+        <result property="userId"    column="user_id"    />
+    </resultMap>
+
+    <sql id="selectIntegralLogVo">
+        select id, pay_money, create_time, update_time, ord_integral, rew_integral, user_id from biz_integral_log
+    </sql>
+
+    <select id="selectIntegralLogList" parameterType="IntegralLog" resultMap="IntegralLogResult">
+        <include refid="selectIntegralLogVo"/>
+        <where>  
+            <if test="payMoney != null "> and pay_money = #{payMoney}</if>
+            <if test="ordIntegral != null "> and ord_integral = #{ordIntegral}</if>
+            <if test="rewIntegral != null "> and rew_integral = #{rewIntegral}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectIntegralLogById" parameterType="Long" resultMap="IntegralLogResult">
+        <include refid="selectIntegralLogVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertIntegralLog" parameterType="IntegralLog" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_integral_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="payMoney != null">pay_money,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="ordIntegral != null">ord_integral,</if>
+            <if test="rewIntegral != null">rew_integral,</if>
+            <if test="userId != null">user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="payMoney != null">#{payMoney},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="ordIntegral != null">#{ordIntegral},</if>
+            <if test="rewIntegral != null">#{rewIntegral},</if>
+            <if test="userId != null">#{userId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateIntegralLog" parameterType="IntegralLog">
+        update biz_integral_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="payMoney != null">pay_money = #{payMoney},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="ordIntegral != null">ord_integral = #{ordIntegral},</if>
+            <if test="rewIntegral != null">rew_integral = #{rewIntegral},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteIntegralLogById" parameterType="Long">
+        delete from biz_integral_log where id = #{id}
+    </delete>
+
+    <delete id="deleteIntegralLogByIds" parameterType="String">
+        delete from biz_integral_log where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

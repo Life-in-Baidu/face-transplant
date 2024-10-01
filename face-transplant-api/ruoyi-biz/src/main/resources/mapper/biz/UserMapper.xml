@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.mapper.UserMapper">
+    
+    <resultMap type="User" id="UserResult">
+        <result property="id"    column="id"    />
+        <result property="openid"    column="openid"    />
+        <result property="nickname"    column="nickname"    />
+        <result property="realname"    column="realname"    />
+        <result property="phone"    column="phone"    />
+        <result property="password"    column="password"    />
+        <result property="avatar"    column="avatar"    />
+        <result property="sex"    column="sex"    />
+        <result property="birthDate"    column="birth_date"    />
+        <result property="address"    column="address"    />
+        <result property="email"    column="email"    />
+        <result property="token"    column="token"    />
+        <result property="tokenExpiredDate"    column="token_expired_date"    />
+        <result property="registerTime"    column="register_time"    />
+        <result property="loginTime"    column="login_time"    />
+        <result property="extraInfo"    column="extra_info"    />
+        <result property="invitation"    column="invitation"    />
+        <result property="identity"    column="identity"    />
+        <result property="ordIntegral"    column="ord_integral"    />
+        <result property="rewIntegral"    column="rew_integral"    />
+    </resultMap>
+
+    <sql id="selectUserVo">
+        SELECT
+            id,
+            openid,
+            nickname,
+            realname,
+            phone,
+            password,
+            avatar,
+            sex,
+            birth_date,
+            address,
+            email,
+            token,
+            token_expired_date,
+            register_time,
+            login_time,
+            extra_info,
+            invitation,
+            identity,
+            ord_integral,
+            rew_integral
+        FROM
+            biz_user
+    </sql>
+
+    <select id="selectUserList" parameterType="User" resultMap="UserResult">
+        <include refid="selectUserVo"/>
+        <where>  
+            <if test="openid != null  and openid != ''"> and openid = #{openid}</if>
+            <if test="nickname != null  and nickname != ''"> and nickname like concat('%', #{nickname}, '%')</if>
+            <if test="realname != null  and realname != ''"> and realname like concat('%', #{realname}, '%')</if>
+            <if test="phone != null"> and phone like concat('%', #{phone}, '%')</if>
+            <if test="phoneIsNull == 0"> and phone is null </if>
+            <if test="phoneIsNull == 1"> and phone != ''</if>
+            <if test="password != null  and password != ''"> and password = #{password}</if>
+            <if test="avatar != null  and avatar != ''"> and avatar = #{avatar}</if>
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+            <if test="birthDate != null "> and datediff ( birth_date , #{birthDate}) = 0</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="token != null  and token != ''"> and token = #{token}</if>
+            <if test="tokenExpiredDate != null "> and token_expired_date = #{tokenExpiredDate}</if>
+            <if test="registerTime != null "> and datediff ( register_time , #{registerTime}) = 0</if>
+            <if test="loginTime != null "> and  datediff ( login_time , #{loginTime}) = 0</if>
+            <if test="extraInfo != null  and extraInfo != ''"> and extra_info = #{extraInfo}</if>
+            <if test="invitation != null"> and invitation = #{invitation}</if>
+            <if test="identity != null "> and identity = #{identity}</if>
+            <if test="ordIntegral != null "> and ord_integral = #{ordIntegral}</if>
+            <if test="rewIntegral != null "> and rew_integral = #{rewIntegral}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserById" parameterType="Long" resultMap="UserResult">
+        <include refid="selectUserVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectUserByPhone" resultType="com.ruoyi.biz.domain.User">
+        <include refid="selectUserVo"/>
+        where  phone = #{phone}
+    </select>
+
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="openid != null and openid != ''">openid,</if>
+            <if test="nickname != null">nickname,</if>
+            <if test="realname != null">realname,</if>
+            <if test="phone != null">phone,</if>
+            <if test="password != null">password,</if>
+            <if test="avatar != null">avatar,</if>
+            <if test="sex != null">sex,</if>
+            <if test="birthDate != null">birth_date,</if>
+            <if test="address != null">address,</if>
+            <if test="email != null">email,</if>
+            <if test="token != null">token,</if>
+            <if test="tokenExpiredDate != null">token_expired_date,</if>
+            <if test="registerTime != null">register_time,</if>
+            <if test="loginTime != null">login_time,</if>
+            <if test="extraInfo != null">extra_info,</if>
+            <if test="invitation != null">invitation,</if>
+            <if test="identity != null">identity,</if>
+            <if test="ordIntegral != null">ord_integral,</if>
+            <if test="rewIntegral != null">rew_integral,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openid != null and openid != ''">#{openid},</if>
+            <if test="nickname != null">#{nickname},</if>
+            <if test="realname != null">#{realname},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="password != null">#{password},</if>
+            <if test="avatar != null">#{avatar},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="birthDate != null">#{birthDate},</if>
+            <if test="address != null">#{address},</if>
+            <if test="email != null">#{email},</if>
+            <if test="token != null">#{token},</if>
+            <if test="tokenExpiredDate != null">#{tokenExpiredDate},</if>
+            <if test="registerTime != null">#{registerTime},</if>
+            <if test="loginTime != null">#{loginTime},</if>
+            <if test="extraInfo != null">#{extraInfo},</if>
+            <if test="invitation != null">#{invitation},</if>
+            <if test="identity != null">#{identity},</if>
+            <if test="ordIntegral != null">#{ordIntegral},</if>
+            <if test="rewIntegral != null">#{rewIntegral},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUser" parameterType="User">
+        update biz_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="openid != null and openid != ''">openid = #{openid},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="realname != null">realname = #{realname},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="birthDate != null">birth_date = #{birthDate},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="token != null">token = #{token},</if>
+            <if test="tokenExpiredDate != null">token_expired_date = #{tokenExpiredDate},</if>
+            <if test="registerTime != null">register_time = #{registerTime},</if>
+            <if test="loginTime != null">login_time = #{loginTime},</if>
+            <if test="extraInfo != null">extra_info = #{extraInfo},</if>
+
+            <if test="invitation != null">invitation = #{invitation},</if>
+            <if test="identity != null">identity = #{identity},</if>
+            <if test="ordIntegral != null">ord_integral = #{ordIntegral},</if>
+            <if test="rewIntegral != null">rew_integral = #{rewIntegral},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserById" parameterType="Long">
+        delete from biz_user where id = #{id}
+    </delete>
+
+    <delete id="deleteUserByIds" parameterType="String">
+        delete from biz_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectUserByOpenid" parameterType="String" resultMap="UserResult">
+        <include refid="selectUserVo"/>
+        where openid = #{openid}
+    </select>
+</mapper>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.mapper.SetmealMapper">
+    
+    <resultMap type="Setmeal" id="SetmealResult">
+        <result property="mealId"    column="meal_id"    />
+        <result property="mealName"    column="meal_name"    />
+        <result property="mealPrice"    column="meal_price"    />
+        <result property="mealDescribe"    column="meal_describe"    />
+        <result property="sort"    column="sort"    />
+        <result property="bonus"    column="bonus"    />
+        <result property="validNum"    column="valid_num"    />
+        <result property="validDay"    column="valid_day"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="control"    column="control"    />
+    </resultMap>
+
+    <sql id="selectSetmealVo">
+        select meal_id, meal_name,
+               meal_price,
+               meal_describe,
+               sort, bonus,
+               valid_num,
+               valid_day, create_time,
+               update_time, control from biz_setmeal
+    </sql>
+
+    <select id="selectSetmealList" parameterType="Setmeal" resultMap="SetmealResult">
+        <include refid="selectSetmealVo"/>
+        <where>  
+            <if test="mealName != null  and mealName != ''"> and meal_name like concat('%', #{mealName}, '%')</if>
+            <if test="mealPrice != null "> and meal_price = #{mealPrice}</if>
+            <if test="mealDescribe != null  and mealDescribe != ''"> and meal_describe = #{mealDescribe}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="bonus != null "> and bonus = #{bonus}</if>
+            <if test="validNum != null "> and valid_num = #{validNum}</if>
+            <if test="validDay != null "> and valid_day = #{validDay}</if>
+            <if test="control != null "> and control = #{control}</if>
+        </where>
+    </select>
+    
+    <select id="selectSetmealByMealId" parameterType="Long" resultMap="SetmealResult">
+        <include refid="selectSetmealVo"/>
+        where meal_id = #{mealId}
+    </select>
+    <select id="selectSetmeaDTOlList" resultType="com.ruoyi.biz.dto.SetmealListDTO">
+        <include refid="selectSetmealVo"/>
+        <where>
+            <if test="mealName != null  and mealName != ''"> and meal_name like concat('%', #{mealName}, '%')</if>
+            <if test="mealPrice != null "> and meal_price = #{mealPrice}</if>
+            <if test="mealDescribe != null  and mealDescribe != ''"> and meal_describe like concat('%', #{mealDescribe}, '%')</if>
+            <if test="validNum != null "> and valid_num = #{validNum}</if>
+            <if test="validDay != null "> and valid_day = #{validDay}</if>
+            and control = 1
+        </where>
+        order by sort desc
+    </select>
+
+    <insert id="insertSetmeal" parameterType="Setmeal" useGeneratedKeys="true" keyProperty="mealId">
+        insert into biz_setmeal
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mealName != null and mealName != ''">meal_name,</if>
+            <if test="mealPrice != null">meal_price,</if>
+            <if test="mealDescribe != null">meal_describe,</if>
+            <if test="sort != null">sort,</if>
+            <if test="bonus != null">bonus,</if>
+            <if test="validNum != null">valid_num,</if>
+            <if test="validDay != null">valid_day,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="control != null">control,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mealName != null and mealName != ''">#{mealName},</if>
+            <if test="mealPrice != null">#{mealPrice},</if>
+            <if test="mealDescribe != null">#{mealDescribe},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="bonus != null">#{bonus},</if>
+            <if test="validNum != null">#{validNum},</if>
+            <if test="validDay != null">#{validDay},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="control != null">#{control},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSetmeal" parameterType="Setmeal">
+        update biz_setmeal
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="mealName != null and mealName != ''">meal_name = #{mealName},</if>
+            <if test="mealPrice != null">meal_price = #{mealPrice},</if>
+            <if test="mealDescribe != null">meal_describe = #{mealDescribe},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="bonus != null">bonus = #{bonus},</if>
+            <if test="validNum != null">valid_num = #{validNum},</if>
+            <if test="validDay != null">valid_day = #{validDay},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="control != null">control = #{control},</if>
+        </trim>
+        where meal_id = #{mealId}
+    </update>
+
+    <delete id="deleteSetmealByMealId" parameterType="Long">
+        delete from biz_setmeal where meal_id = #{mealId}
+    </delete>
+
+    <delete id="deleteSetmealByMealIds" parameterType="String">
+        delete from biz_setmeal where meal_id in 
+        <foreach item="mealId" collection="array" open="(" separator="," close=")">
+            #{mealId}
+        </foreach>
+    </delete>
+</mapper>

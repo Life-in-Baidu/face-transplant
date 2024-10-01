@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.mapper.OrderMapper">
+    
+    <resultMap type="Order" id="OrderResult">
+        <result property="orderId"    column="order_id"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="userId"    column="user_id"    />
+        <result property="version"    column="version"    />
+        <result property="mealId"    column="meal_id"    />
+        <result property="payResult"    column="pay_result"    />
+        <result property="payWay"    column="pay_way"    />
+        <result property="payMoney"    column="pay_money"    />
+        <result property="transactionId"    column="transaction_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="entry"    column="entry"    />
+        <result property="client"    column="client"    />
+        <result property="validDay"    column="valid_day"    />
+    </resultMap>
+
+    <sql id="selectOrderVo">
+        select order_id, order_no, user_id, version, meal_id, pay_result, pay_way, pay_money, transaction_id, create_time, update_time, entry, client, valid_day from biz_order
+    </sql>
+
+    <select id="selectOrderList" parameterType="Order" resultMap="OrderResult">
+        <include refid="selectOrderVo"/>
+        <where>  
+            <if test="orderNo != null  and orderNo != ''"> and order_no = #{orderNo}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="version != null "> and version = #{version}</if>
+            <if test="mealId != null "> and meal_id = #{mealId}</if>
+            <if test="payResult != null "> and pay_result = #{payResult}</if>
+            <if test="payWay != null "> and pay_way = #{payWay}</if>
+            <if test="payMoney != null "> and pay_money = #{payMoney}</if>
+            <if test="transactionId != null  and transactionId != ''"> and transaction_id = #{transactionId}</if>
+            <if test="entry != null  and entry != ''"> and entry = #{entry}</if>
+            <if test="client != null  and client != ''"> and client = #{client}</if>
+            <if test="validDay != null "> and valid_day = #{validDay}</if>
+        </where>
+    </select>
+    
+    <select id="selectOrderByOrderId" parameterType="Long" resultMap="OrderResult">
+        <include refid="selectOrderVo"/>
+        where order_id = #{orderId}
+    </select>
+    <select id="selectByOrderNo" resultType="com.ruoyi.biz.domain.Order">
+        <include refid="selectOrderVo"/>
+        where order_no = #{orderNo}
+    </select>
+
+    <insert id="insertOrder" parameterType="Order" useGeneratedKeys="true" keyProperty="orderId">
+        insert into biz_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null and orderNo != ''">order_no,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="version != null">version,</if>
+            <if test="mealId != null">meal_id,</if>
+            <if test="payResult != null">pay_result,</if>
+            <if test="payWay != null">pay_way,</if>
+            <if test="payMoney != null">pay_money,</if>
+            <if test="transactionId != null">transaction_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="entry != null">entry,</if>
+            <if test="client != null">client,</if>
+            <if test="validDay != null">valid_day,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null and orderNo != ''">#{orderNo},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="version != null">#{version},</if>
+            <if test="mealId != null">#{mealId},</if>
+            <if test="payResult != null">#{payResult},</if>
+            <if test="payWay != null">#{payWay},</if>
+            <if test="payMoney != null">#{payMoney},</if>
+            <if test="transactionId != null">#{transactionId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="entry != null">#{entry},</if>
+            <if test="client != null">#{client},</if>
+            <if test="validDay != null">#{validDay},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOrder" parameterType="Order">
+        update biz_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderNo != null and orderNo != ''">order_no = #{orderNo},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="mealId != null">meal_id = #{mealId},</if>
+            <if test="payResult != null">pay_result = #{payResult},</if>
+            <if test="payWay != null">pay_way = #{payWay},</if>
+            <if test="payMoney != null">pay_money = #{payMoney},</if>
+            <if test="transactionId != null">transaction_id = #{transactionId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="entry != null">entry = #{entry},</if>
+            <if test="client != null">client = #{client},</if>
+            <if test="validDay != null">valid_day = #{validDay},</if>
+        </trim>
+        where order_id = #{orderId}
+    </update>
+
+    <delete id="deleteOrderByOrderId" parameterType="Long">
+        delete from biz_order where order_id = #{orderId}
+    </delete>
+
+    <delete id="deleteOrderByOrderIds" parameterType="String">
+        delete from biz_order where order_id in 
+        <foreach item="orderId" collection="array" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </delete>
+</mapper>

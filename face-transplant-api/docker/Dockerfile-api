@@ -1,0 +1,5 @@
+FROM openjdk:8
+MAINTAINER shijieming
+ENV TZ Asia/Shanghai
+COPY ./ruoyi-admin/target/ruoyi-admin.jar /jar/ruoyi-admin.jar
+WORKDIR /jar/

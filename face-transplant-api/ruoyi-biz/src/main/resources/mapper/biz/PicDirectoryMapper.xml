@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.mapper.PicDirectoryMapper">
+
+    <resultMap type="PicDirectory" id="PicDirectoryResult">
+        <result property="id"    column="id"    />
+        <result property="supDirectoryId"    column="sup_directory_id"    />
+        <result property="directoryUrl"    column="directory_url"    />
+        <result property="directoryName"    column="directory_name"    />
+        <result property="directoryLevel"    column="directory_level"    />
+        <result property="price"    column="price"    />
+        <result property="priceRew"    column="price_rew"    />
+        <result property="directoryTag"    column="directory_tag"    />
+        <result property="usageTimes"    column="usage_times"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="numberFoun"    column="number_foun"    />
+        <result property="numberRew"    column="number_rew"    />
+        <result property="introduce"    column="introduce"    />
+    </resultMap>
+
+    <resultMap type="PicDirectoryListDTO" id="PicDirectoryDTOResult">
+        <result property="id"    column="id"    />
+        <result property="supDirectoryId"    column="sup_directory_id"    />
+        <result property="directoryUrl"    column="directory_url"    />
+        <result property="directoryName"    column="directory_name"    />
+        <result property="price"    column="price"    />
+        <result property="usageTimes"    column="usage_times"    />
+    </resultMap>
+
+    <sql id="selectPicDirectoryVo">
+        select id, sup_directory_id, directory_url, directory_name, directory_level,
+               price, price_rew,
+               directory_tag, usage_times, create_time, update_time,
+               number_foun, number_rew,
+               introduce
+        from biz_directory
+    </sql>
+
+    <select id="selectPicDirectoryList" parameterType="PicDirectory" resultMap="PicDirectoryResult">
+        <include refid="selectPicDirectoryVo"/>
+        <where>
+            <if test="supDirectoryId != null "> and sup_directory_id = #{supDirectoryId}</if>
+            <if test="directoryUrl != null  and directoryUrl != ''"> and directory_url = #{directoryUrl}</if>
+            <if test="directoryName != null  and directoryName != ''"> and directory_name like concat('%', #{directoryName}, '%')</if>
+            <if test="directoryLevel != null  and directoryLevel != ''"> and directory_level = #{directoryLevel}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="priceRew != null "> and price_rew = #{priceRew}</if>
+            <if test="directoryTag != null  and directoryTag != ''"> and directory_tag = #{directoryTag}</if>
+            <if test="usageTimes != null "> and usage_times = #{usageTimes}</if>
+            <if test="numberFoun != null "> and number_foun = #{numberFoun}</if>
+            <if test="numberRew != null "> and number_rew = #{numberRew}</if>
+            <if test="introduce != null  and introduce != ''"> and introduce = #{introduce}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectPicDirectoryById" parameterType="Long" resultMap="PicDirectoryResult">
+        <include refid="selectPicDirectoryVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectPicDirectoryIdList" resultType="com.ruoyi.biz.dto.PicDirectoryListDTO">
+        <include refid="selectPicDirectoryVo"/>
+        where sup_directory_id = #{directoryId}
+    </select>
+    <select id="selectPicDirectoryNowList" resultType="com.ruoyi.biz.dto.PicDirectoryListDTO">
+        <include refid="selectPicDirectoryVo"/>
+        where directory_level = 3
+        order by create_time desc
+    </select>
+    <select id="selectPicDirectoryHostList" resultType="com.ruoyi.biz.dto.PicDirectoryListDTO">
+        <include refid="selectPicDirectoryVo"/>
+        where directory_level = 3
+        order by usage_times desc
+    </select>
+    <!--    <select id="selectPicDirectoryIdList" resultType="com.ruoyi.biz.domain.PicDirectory">-->
+<!--        <include refid="selectPicDirectoryVo"/>-->
+<!--        where sup_directory_id = #{directoryId}-->
+<!--    </select>-->
+<!--    <select id="selectPicDirectoryNowList" resultType="com.ruoyi.biz.domain.PicDirectory">-->
+<!--        <include refid="selectPicDirectoryVo"/>-->
+<!--        where directory_level = 3-->
+<!--        order by create_time desc-->
+<!--    </select>-->
+<!--    <select id="selectPicDirectoryHostList" resultType="com.ruoyi.biz.domain.PicDirectory">-->
+<!--        <include refid="selectPicDirectoryVo"/>-->
+<!--        where directory_level = 3-->
+<!--        order by usage_times desc-->
+<!--    </select>-->
+
+    <insert id="insertPicDirectory" parameterType="PicDirectory" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_directory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="supDirectoryId != null">sup_directory_id,</if>
+            <if test="directoryUrl != null">directory_url,</if>
+            <if test="directoryName != null">directory_name,</if>
+            <if test="directoryLevel != null">directory_level,</if>
+            <if test="price != null">price,</if>
+            <if test="priceRew != null">price_rew,</if>
+            <if test="directoryTag != null">directory_tag,</if>
+            <if test="usageTimes != null">usage_times,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="numberFoun != null">number_foun,</if>
+            <if test="numberRew != null">number_rew,</if>
+            <if test="introduce != null">introduce,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="supDirectoryId != null">#{supDirectoryId},</if>
+            <if test="directoryUrl != null">#{directoryUrl},</if>
+            <if test="directoryName != null">#{directoryName},</if>
+            <if test="directoryLevel != null">#{directoryLevel},</if>
+            <if test="price != null">#{price},</if>
+            <if test="priceRew != null">#{priceRew},</if>
+            <if test="directoryTag != null">#{directoryTag},</if>
+            <if test="usageTimes != null">#{usageTimes},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="numberFoun != null">#{numberFoun},</if>
+            <if test="numberRew != null">#{numberRew},</if>
+            <if test="introduce != null">#{introduce},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePicDirectory" parameterType="PicDirectory">
+        update biz_directory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supDirectoryId != null">sup_directory_id = #{supDirectoryId},</if>
+            <if test="directoryUrl != null">directory_url = #{directoryUrl},</if>
+            <if test="directoryName != null">directory_name = #{directoryName},</if>
+            <if test="directoryLevel != null">directory_level = #{directoryLevel},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="priceRew != null">price_rew = #{priceRew},</if>
+            <if test="directoryTag != null">directory_tag = #{directoryTag},</if>
+            <if test="usageTimes != null">usage_times = #{usageTimes},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="numberFoun != null">number_foun = #{numberFoun},</if>
+            <if test="numberRew != null">number_rew = #{numberRew},</if>
+            <if test="introduce != null">introduce = #{introduce},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePicDirectoryById" parameterType="Long">
+        delete from biz_directory where id = #{id}
+    </delete>
+
+    <delete id="deletePicDirectoryByIds" parameterType="String">
+        delete from biz_directory where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.mapper.BizLbtMapper">
+
+    <resultMap type="BizLbt" id="BizLbtResult">
+        <result property="id"    column="id"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="caption"    column="caption"    />
+    </resultMap>
+
+    <sql id="selectBizLbtVo">
+        select id, image_url, caption from biz_lbt
+    </sql>
+
+    <select id="selectBizLbtList" parameterType="BizLbt" resultMap="BizLbtResult">
+        <include refid="selectBizLbtVo"/>
+        <where>
+            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
+            <if test="caption != null  and caption != ''"> and caption = #{caption}</if>
+        </where>
+    </select>
+
+    <select id="selectBizLbtById" parameterType="Long" resultMap="BizLbtResult">
+        <include refid="selectBizLbtVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBizLbt" parameterType="BizLbt" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_lbt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="imageUrl != null">image_url,</if>
+            <if test="caption != null">caption,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="imageUrl != null">#{imageUrl},</if>
+            <if test="caption != null">#{caption},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBizLbt" parameterType="BizLbt">
+        update biz_lbt
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+            <if test="caption != null">caption = #{caption},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizLbtById" parameterType="Long">
+        delete from biz_lbt where id = #{id}
+    </delete>
+
+    <delete id="deleteBizLbtByIds" parameterType="String">
+        delete from biz_lbt where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
